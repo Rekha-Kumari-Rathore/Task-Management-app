@@ -6,7 +6,7 @@ import { MdDelete } from "react-icons/md";
 import { MdAddCircle } from "react-icons/md";
 import { FaHeart } from "react-icons/fa6";
 
-const Cards = ({ home, setInputDiv, data,fetch }) => {
+const Cards = ({ home, setInputDiv, data,fetch , setUpdatedData }) => {
     const headers = {
         id: localStorage.getItem("id"),
         authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -34,7 +34,26 @@ const Cards = ({ home, setInputDiv, data,fetch }) => {
             { headers }
         );
         fetch()
-        // Optionally update your UI or state here
+      
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const handleUpdate = (id, title, desc) => {
+  setInputDiv("fixed");
+  setUpdatedData({id:id, title:title, description:desc});
+};
+
+const deleteTask = async (id) => {
+    try {
+        const response = await axios.delete(
+            `http://localhost:1000/api/v2/delete-task/${id}`,
+           
+            {headers}
+        );
+        fetch();
+        console.log(response.data.message);
     } catch (error) {
         console.log(error);
     }
@@ -47,7 +66,7 @@ const Cards = ({ home, setInputDiv, data,fetch }) => {
                     <div className="flex flex-col justify-between bg-orange-400 rounded-sm p-4">
                         <div>
                             <h3 className="text-xl font-semibold">{items.title}</h3>
-                            <p className="text-gray300 my-2">{items.desc}</p>
+                            <p className="text-gray300 my-2 text-wrap">{items.description }</p>
 
                         </div>
                         <div className="mt-4 w-full flex items-center">
@@ -62,10 +81,11 @@ const Cards = ({ home, setInputDiv, data,fetch }) => {
                                 <button onClick={()=>handleImportant(items._id,items.important)}>
                                     {items.important ?  <FaHeart className="text-red-500"/>:<CiHeart /> }
                                 </button>
-                                <button>
+                              {home !== "false" &&   <button onClick={() => handleUpdate(items._id,items.title, items.description)
+                                   }>
                                     <FaEdit />
-                                </button>
-                                <button>
+                                </button>}
+                                <button onClick={() => deleteTask(items._id)}>
                                     <MdDelete />
                                 </button>
                             </div>

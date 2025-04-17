@@ -7,6 +7,11 @@ import axios from "axios";
 const AllTasks = () => {
     const [InputDiv, setInputDiv] = useState("hidden");
     const [Data, setData] = useState([]);  
+    const [UpdatedData, setUpdatedData] = useState({
+        id: "" , 
+        title: "" , 
+        desc: "" ,
+    });
     
     const headers = {
         id: localStorage.getItem("id"),
@@ -15,7 +20,8 @@ const AllTasks = () => {
 
     
     useEffect(() => {
-        fetch();
+        if (localStorage.getItem("id") && localStorage.getItem("token")) {
+        fetch(); }
     }, []);
     const fetch = async () => {
         try {
@@ -32,6 +38,8 @@ const AllTasks = () => {
             }
         } catch (error) {
             console.error("Error fetching tasks:", error);
+
+           
         }
     };
 
@@ -46,12 +54,22 @@ const AllTasks = () => {
 
                 {/* Safely check if tasks exist before rendering Cards */}
                 {Data.length > 0 ? (
-                    <Cards home={"true"} setInputDiv={setInputDiv} data={Data} fetch={fetch}/>
+                    <Cards 
+                    home={"true"}
+                     setInputDiv={setInputDiv}
+                      data={Data} fetch={fetch}
+                       setUpdatedData= {setUpdatedData}
+                        />
                 ) : (
                     <p>No tasks available.</p>  // Display this if no tasks are available
                 )}
             </div>
-            <InputData InputDiv={InputDiv} setInputDiv={setInputDiv} />
+            <InputData
+            fetch={fetch}
+             InputDiv={InputDiv}
+              setInputDiv={setInputDiv}
+               UpdatedData={UpdatedData}
+               setUpdatedData={setUpdatedData} />
         </>
     );
 };
