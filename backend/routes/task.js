@@ -6,7 +6,7 @@ const { authenticateToken } = require("./auth");
 // Create Task
 router.post("/create-task", authenticateToken, async (req, res) => {
     try {
-        const { title, desc } = req.body;
+        const { title, description} = req.body;
         const { id } = req.user; // Access user from decoded token
 
         const user = await User.findById(id);
@@ -20,7 +20,7 @@ router.post("/create-task", authenticateToken, async (req, res) => {
             return res.status(400).json({ message: "Task with this title already exists." });
         }
 
-        const newTask = new Task({ title, description: desc, user: id });
+        const newTask = new Task({ title, description: description, user: id });
         await newTask.save();
 
         await User.findByIdAndUpdate(id, { $push: { tasks: newTask._id } });
@@ -78,7 +78,7 @@ router.delete("/delete-task/:id", authenticateToken, async (req, res) => {
 router.put("/update-task/:id", authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, desc } = req.body;
+        const { title, description } = req.body;
         const { id: userId } = req.user;
 
         const task = await Task.findOne({ _id: id, user: userId });
@@ -87,7 +87,7 @@ router.put("/update-task/:id", authenticateToken, async (req, res) => {
         }
 
         task.title = title;
-        task.description = desc;
+        task.description = description;
         await task.save();
 
         res.status(200).json({ message: "Task updated successfully" });
